@@ -32,19 +32,19 @@ import sys
 import os
 import os.path
 import logging
-#from PySide import QtCore
-#from PySide import QtGui
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PySide import QtCore
+from PySide import QtGui
+#from PyQt4 import QtCore
+#from PyQt4 import QtGui
 
-QtCore.Signal = QtCore.pyqtSignal
+#QtCore.Signal = QtCore.pyqtSignal
 
-QtCore.Slot = QtCore.pyqtSlot
+#QtCore.Slot = QtCore.pyqtSlot
 
-QtGui.QFileDialog.getOpenFileNames = \
-    QtGui.QFileDialog.getOpenFileNamesAndFilter
+#QtGui.QFileDialog.getOpenFileNames = \
+#    QtGui.QFileDialog.getOpenFileNamesAndFilter
 
-#os.environ['QT_API'] = 'pyside' # for matplotlib to use pyside
+os.environ['QT_API'] = 'pyside' # for matplotlib to use pyside
 import matplotlib
 matplotlib.use('Qt4Agg') #for py2exe not to search other backends
 
