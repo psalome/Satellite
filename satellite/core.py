@@ -32,10 +32,19 @@ import sys
 import os
 import os.path
 import logging
-from PySide import QtCore
-from PySide import QtGui
+#from PySide import QtCore
+#from PySide import QtGui
+from PyQt4 import QtCore
+from PyQt4 import QtGui
 
-os.environ['QT_API'] = 'pyside' # for matplotlib to use pyside
+QtCore.Signal = QtCore.pyqtSignal
+
+QtCore.Slot = QtCore.pyqtSlot
+
+QtGui.QFileDialog.getOpenFileNames = \
+    QtGui.QFileDialog.getOpenFileNamesAndFilter
+
+#os.environ['QT_API'] = 'pyside' # for matplotlib to use pyside
 import matplotlib
 matplotlib.use('Qt4Agg') #for py2exe not to search other backends
 
@@ -121,9 +130,9 @@ class ViewTab(QtGui.QTabWidget):
 
 class ImportLoader(QtCore.QThread):
     # pylint: disable=R0904
-    new_data_ready = QtCore.Signal(object, str)
+    new_data_ready = QtCore.Signal(object, str)    
     log_message_signal = QtCore.Signal(str)
-
+    
     def __init__(self, importer_name, parent=None):
         QtCore.QThread.__init__(self, parent)
         self.importer_name = importer_name
@@ -136,7 +145,7 @@ class ImportLoader(QtCore.QThread):
         channel = SatusBarLogHandler(self.log_message_signal)
         channel.setLevel(logging.INFO)
         channel.setFormatter(logging.Formatter('%(name)-12s: %(message)s'))
-        log.addHandler(channel)
+        log.addHandler(channel)        
 
     def __call__(self):
         self.file_names = QtGui.QFileDialog.getOpenFileNames(
@@ -144,11 +153,11 @@ class ImportLoader(QtCore.QThread):
             '%s (%s)'%(self.importer_name, self.file_ext),
             options = QtGui.QFileDialog.DontUseNativeDialog)
         if len(self.file_names) > 0:
-            self.start() #Acutally call run self.run()
+            self.start() #Actually call run self.run()
 
     def run(self):
         for file_name in self.file_names[0]:
-            experiment = self.importer.load(file_name)
+            experiment = self.importer.load(str(file_name))
             self.new_data_ready.emit(experiment, file_name)
 
 
@@ -280,7 +289,7 @@ class MainWin(QtGui.QMainWindow):
         self.statusBar().showMessage(message)
 
     def add_new_experiment(self, experiment, file_name):
-        data_name = os.path.splitext(os.path.basename(file_name))[0]
+        data_name = os.path.splitext(os.path.basename(str(file_name)))[0]
         experiment.exp_name = data_name
         self.core_storm.append(View(experiment))
         item = QtGui.QListWidgetItem(experiment.exp_name,
