@@ -1,9 +1,6 @@
 DirName=$(shell pwd)
 Name=$(notdir $(DirName))
 
-qresource:
-	pyside-rcc satellite/qresource.qrc -o satellite/qresource.py
-
 clean :
 	find ./ -name "*.pyc" -exec rm -f {} \;
 	find ./ -name "*~" -exec rm -f {} \;
@@ -14,8 +11,9 @@ clean :
 	rm -rf build
 	rm -rf disttools/satellite_bundle
 	rm -rf disttools/satellite_bundle.zip
+	./VERSION-GEN
 
-install:
+install: clean
 	python setup.py install --home=~
 
 archive : clean
